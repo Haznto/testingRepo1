@@ -10,9 +10,40 @@ const playerImg = new Image();
 const keyImg = new Image();
 
 wallImg.src = 'wall.png';
-pathImg.src = 'path.jpg';
-playerImg.src = 'player.jpg';
-keyImg.src = 'key.png';
+pathImg.src = 'wood.png';
+playerImg.src = 'playerDown.png';
+keyImg.src = 'GoldenKey.png';
+
+class Player {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.Image = new Image();
+        this.Image.src = 'playerDown.png';
+        this.down = true;
+        this.up = false;
+        this.left = false;
+        this.right = false;
+        this.currentQuarter = 0;
+        this.quarterWidth = this.Image.width / 4;
+        this.quarterHeight = this.Image.height;
+    
+    }
+    // @TO DO: Handle the drawing and image rendering depends on the charachter side, the image src should be changed to the correct side
+    drawPlayer() {
+        ctx.drawImage(
+            this.Image,
+            this.quarterWidth * this.currentQuarter,
+            0, // source x and y
+            this.quarterWidth,
+            this.quarterHeight, // source width and height
+            this.x * tileSize,
+            this.y * tileSize,  
+            tileSize,
+            tileSize
+        );
+    }
+}
 
 let imagesLoaded = 0;
 
@@ -34,7 +65,7 @@ const keyCollectSound = new Audio('key-collect.mp3');
 const levelCompleteSound = new Audio('level-complete.mp3');
 
 // Game state
-let player = { x: 1, y: 1 }; // Player starting position
+let player = new Player(1, 1); // Player position
 let key = { x: 5, y: 5 }; // Key position
 let level = 1;
 let collectedCharacters = []; // Store collected characters
@@ -114,6 +145,8 @@ const keys = [
 
 const fianceeName = "SOPHIA"; // Replace this with the actual name
 
+
+
 function calculateTileSize() {
     const rows = mazes[0].length;
     const cols = mazes[0][0].length;
@@ -132,70 +165,71 @@ function drawMaze(maze) {
     }
 }
 
-function drawPlayer() {
-    ctx.drawImage(playerImg, player.x * tileSize, player.y * tileSize, tileSize, tileSize);
-}
+
 
 function drawKey() {
     ctx.drawImage(keyImg, key.x * tileSize, key.y * tileSize, tileSize, tileSize);
 }
 
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawMaze(mazes[level - 1]);
-    drawPlayer();
-    drawKey();
-}
 
-function animateKeyTransformation() {
-    keyCollectSound.play(); // Play key collection sound
-    let frame = 0;
-    const interval = setInterval(() => {
-        ctx.clearRect(key.x * tileSize, key.y * tileSize, tileSize, tileSize);
-        ctx.fillStyle = `rgba(255, 215, 0, ${1 - frame / 10})`;
-        ctx.fillRect(key.x * tileSize, key.y * tileSize, tileSize, tileSize);
+// @TODO: Implement smooth handling for the levels. 
 
-        if (frame === 10) {
-            clearInterval(interval);
-            drawCharacterAnimation(fianceeName[level - 1]);
-        }
+// function gameLoop() {
+//     ctx.clearRect(0, 0, canvas.width, canvas.height);
+//     drawMaze(mazes[level - 1]);
+//     player.drawPlayer();
+//     drawKey();
+// }
 
-        frame++;
-    }, 50);
-}
+// function animateKeyTransformation() {
+//     keyCollectSound.play(); // Play key collection sound
+//     let frame = 0;
+//     const interval = setInterval(() => {
+//         ctx.clearRect(key.x * tileSize, key.y * tileSize, tileSize, tileSize);
+//         ctx.fillStyle = `rgba(255, 215, 0, ${1 - frame / 10})`;
+//         ctx.fillRect(key.x * tileSize, key.y * tileSize, tileSize, tileSize);
 
-function drawCharacterAnimation(character) {
-    let frame = 0;
-    const interval = setInterval(() => {
-        ctx.clearRect(key.x * tileSize, key.y * tileSize, tileSize, tileSize);
-        ctx.font = `${30 + frame}px Arial`;
-        ctx.fillStyle = `rgba(255, 0, 0, ${1 - frame / 20})`;
-        ctx.fillText(character, key.x * tileSize + 10 - frame / 2, key.y * tileSize + 30 + frame / 2);
+//         if (frame === 10) {
+//             clearInterval(interval);
+//             drawCharacterAnimation(fianceeName[level - 1]);
+//         }
 
-        if (frame === 20) {
-            clearInterval(interval);
-            collectedCharacters.push(character);
-            drawCharacter(character);
-            levelCompleteSound.play(); // Play level completion sound
-            level++;
-            if (level <= mazes.length) {
-                player = { x: 1, y: 1 };
-                key = keys[level - 1];
-                showLevelTransition();
-            } else {
-                showFinalScreen();
-            }
-        }
+//         frame++;
+//     }, 50);
+// }
 
-        frame++;
-    }, 50);
-}
+// function drawCharacterAnimation(character) {
+//     let frame = 0;
+//     const interval = setInterval(() => {
+//         ctx.clearRect(key.x * tileSize, key.y * tileSize, tileSize, tileSize);
+//         ctx.font = `${30 + frame}px Arial`;
+//         ctx.fillStyle = `rgba(255, 0, 0, ${1 - frame / 20})`;
+//         ctx.fillText(character, key.x * tileSize + 10 - frame / 2, key.y * tileSize + 30 + frame / 2);
 
-function drawCharacter(character) {
-    ctx.font = '30px Arial';
-    ctx.fillStyle = 'red';
-    ctx.fillText(character, key.x * tileSize + 10, key.y * tileSize + 30);
-}
+//         if (frame === 20) {
+//             clearInterval(interval);
+//             collectedCharacters.push(character);
+//             drawCharacter(character);
+//             levelCompleteSound.play(); // Play level completion sound
+//             level++;
+//             if (level <= mazes.length) {
+//                 player = { x: 1, y: 1 };
+//                 key = keys[level - 1];
+//                 showLevelTransition();
+//             } else {
+//                 showFinalScreen();
+//             }
+//         }
+
+//         frame++;
+//     }, 50);
+// }
+
+// function drawCharacter(character) {
+//     ctx.font = '30px Arial';
+//     ctx.fillStyle = 'red';
+//     ctx.fillText(character, key.x * tileSize + 10, key.y * tileSize + 30);
+// }
 
 function movePlayer(dx, dy) {
     const newX = player.x + dx;
@@ -205,11 +239,9 @@ function movePlayer(dx, dy) {
         player.x = newX;
         player.y = newY;
     }
-    
+
     if (player.x === key.x && player.y === key.y) {
         animateKeyTransformation();
-    } else {
-        gameLoop();
     }
 }
 
@@ -244,18 +276,28 @@ function showFinalScreen() {
     ctx.fillStyle = 'red';
     ctx.fillText(collectedCharacters.join(''), canvas.width / 2, canvas.height / 2 + 100);
 }
+start= false
 
+// @TODO: Implement player movement here note: if the player was moving on oither direction his direction should be chandes and the quarter will be set to zero
 document.addEventListener('keydown', (event) => {
     switch (event.key) {
         case 'Enter':
             if (level === 1 && player.x === 1 && player.y === 1) {
-                gameLoop();
+                start= true
             }
             break;
         case 'ArrowUp':
             movePlayer(0, -1);
             break;
         case 'ArrowDown':
+            if (player.down) {
+                if (player.currentQuarter === 3){
+                    player.currentQuarter =0;
+                }
+                else{
+                    player.currentQuarter +=1;
+                }
+            }
             movePlayer(0, 1);
             break;
         case 'ArrowLeft':
@@ -267,13 +309,30 @@ document.addEventListener('keydown', (event) => {
     }
 });
 
-// Recalculate tile size and redraw when the window is resized
-window.addEventListener('resize', () => {
-    calculateTileSize();
-    if (level === 1 && player.x === 1 && player.y === 1) {
-        showStartScreen();
-    } else {
-        gameLoop();
-    }
-});
+// // Recalculate tile size and redraw when the window is resized
+// window.addEventListener('resize', () => {
+//     calculateTileSize();
+//     if (level === 1 && player.x === 1 && player.y === 1) {
+//         showStartScreen();
+//     } else {
+//         gameLoop();
+//     }
+// });
 
+
+
+
+function animate() {
+    if (!start) {
+        showStartScreen()        
+    }
+    else{
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawMaze(mazes[level - 1]);
+        player.drawPlayer();
+        drawKey();
+    }
+    requestAnimationFrame(animate);
+}
+
+animate();
