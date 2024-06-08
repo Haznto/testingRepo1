@@ -287,6 +287,22 @@ document.addEventListener('keydown', (event) => {
             }
             break;
         case 'ArrowUp':
+            if (player.up) {
+                if (player.currentQuarter === 3){
+                    player.currentQuarter =0;
+                }
+                else{
+                    player.currentQuarter +=1;
+                }
+            }
+            else{
+                player.down = false;
+                player.up = true;
+                player.left = false;
+                player.right = false;
+                player.Image.src = 'playerUp.png';
+                player.currentQuarter = 0;
+            }
             movePlayer(0, -1);
             break;
         case 'ArrowDown':
@@ -298,12 +314,52 @@ document.addEventListener('keydown', (event) => {
                     player.currentQuarter +=1;
                 }
             }
+            else{
+                player.down = true;
+                player.up = false;
+                player.left = false;
+                player.right = false;
+                player.Image.src = 'playerDown.png';
+                player.currentQuarter = 0;
+            }
             movePlayer(0, 1);
             break;
         case 'ArrowLeft':
+            if (player.left) {
+                if (player.currentQuarter === 3){
+                    player.currentQuarter =0;
+                }
+                else{
+                    player.currentQuarter +=1;
+                }
+            }
+            else{
+                player.down = false;
+                player.up = false;
+                player.left = true;
+                player.right = false;
+                player.Image.src = 'playerLeft.png';
+                player.currentQuarter = 0;
+            }
             movePlayer(-1, 0);
             break;
         case 'ArrowRight':
+            if (player.right) {
+                if (player.currentQuarter === 3){
+                    player.currentQuarter =0;
+                }
+                else{
+                    player.currentQuarter +=1;
+                }
+            }
+            else{
+                player.down = false;
+                player.up = false;
+                player.left = false;
+                player.right = true;
+                player.Image.src = 'playerRight.png';
+                player.currentQuarter = 0;
+            }
             movePlayer(1, 0);
             break;
     }
